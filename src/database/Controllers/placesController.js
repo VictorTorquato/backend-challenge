@@ -5,19 +5,34 @@ module.exports = {
     async create(request, response){
         const { name, data, countryId } = request.body;
         console.log(data);
-    
-        await connection('nomeTable').insert({
-            name, 
-            data,
-            countryId
-        })
-        return response.json();
+
+        const created = Date.now();
+        const updated = Date.now();
+
+        try{
+            await connection('places').insert({
+                name, 
+                data,
+                created,
+                updated,
+                countryId
+            })
+            return response.status(201);
+        }catch(error){
+            console.log(error.name + ":" + error.message);
+            return response.status(400);
+        }    
     },
 
     async index(request, response){
-        const data = await connection('places').select('*');
+        try{
+            const data = await connection('places').select('*').orderBy('data');
 
-        return response.json(data);
+            return response.json(data);
+        }catch(error){
+            console.log(error.name + ":" + error.message);
+            return response.status(400);
+        } 
     },
 
     
@@ -25,22 +40,21 @@ module.exports = {
 	    const { id } = request.params;
 	
 	    try{
-		    await connection('nomeTable')
+		    await connection('places')
 		    .where('id', id)
 		    .delete();
 	        return response.status(204).send();
         }catch(error){
             console.log(error.name + ":" + error.message);
-            return;
+            return response.status(400);;
         }
     },
 
     async update(id, newName, newData, newCountry){
         try{
-            await connection('nomeTable').where('id', '=', id).update({
+            await connection('places').where('id', '=', id).update({
                 name: newName,
-                data: newData,
-                country: newCountry
+                data: newData
             });
         }
         catch(error){

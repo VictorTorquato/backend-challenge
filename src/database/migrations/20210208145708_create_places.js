@@ -4,6 +4,8 @@ exports.up = function(knex){	// cria a Table
 		table.serial('id').primary();
 		table.string('name').notNullable();
         table.string('data').notNullable();
+		table.string('created').notNullable();
+		table.string('updated').notNullable();
         table.string('countryId').notNullable();
         
         table.foreign('countryId').references('id').inTable('countries');
