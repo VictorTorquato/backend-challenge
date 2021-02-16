@@ -1,9 +1,9 @@
 
 exports.up = function(knex){	// cria a Table
 	return knex.schema.createTable('countries', function(table) {
-		table.serial('id').primary();
+		table.increments('id').primary();
 		table.string('name').notNullable();
-		// campos
+		table.string('url').notNullable();
 	});
 };
 

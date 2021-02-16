@@ -1,41 +1,35 @@
-const connection = require('./database/connection');
+const connection = require('../connection');
 
 module.exports = {
 
     async create(request, response){
         const { name, data, countryId } = request.body;
-        console.log(data);
-
-        const created = Date.now();
-        const updated = Date.now();
 
         try{
             await connection('places').insert({
                 name, 
                 data,
-                created,
-                updated,
                 countryId
             })
-            return response.status(201);
+            return response.status(201).send()
         }catch(error){
             console.log(error.name + ":" + error.message);
-            return response.status(400);
+            return response.status(400).send();
         }    
     },
 
     async index(request, response){
         try{
-            const data = await connection('places').select('*').orderBy('data');
+            const data = await connection('places').join('countries', 'countries.id' , '=', 'countryId')
+            .select('places.id','countries.name as País', 'places.name', 'data as Meta', 'created', 'updated', 'url').orderBy('data');
 
             return response.json(data);
         }catch(error){
             console.log(error.name + ":" + error.message);
-            return response.status(400);
+            return response.status(400).send();
         } 
     },
 
-    
     async delete(request, response){
 	    const { id } = request.params;
 	
@@ -46,21 +40,25 @@ module.exports = {
 	        return response.status(204).send();
         }catch(error){
             console.log(error.name + ":" + error.message);
-            return response.status(400);;
+            return response.status(400).send();
         }
     },
 
-    async update(id, newName, newData, newCountry){
+    async update(request, response){
+
+        const { id, newName, newData } = request.body;
+
         try{
             await connection('places').where('id', '=', id).update({
                 name: newName,
                 data: newData
             });
+	        return response.status(204).send();
         }
         catch(error){
             console.log(error.name + ":" + error.message);
+            return response.status(400).send();
         }
-        return;
     }
 
 }

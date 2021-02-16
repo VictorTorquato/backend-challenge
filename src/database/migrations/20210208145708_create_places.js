@@ -1,11 +1,11 @@
 
 exports.up = function(knex){	// cria a Table
 	return knex.schema.createTable('places', function(table) {
-		table.serial('id').primary();
+		table.increments('id').primary();
 		table.string('name').notNullable();
-        table.string('data').notNullable();
-		table.string('created').notNullable();
-		table.string('updated').notNullable();
+        table.date('data').notNullable();
+		table.timestamp('created').defaultTo(knex.fn.now());
+		table.timestamp('updated').defaultTo(knex.fn.now());
         table.string('countryId').notNullable();
         
         table.foreign('countryId').references('id').inTable('countries');
