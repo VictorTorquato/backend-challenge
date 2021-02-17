@@ -2,42 +2,38 @@ const connection = require('../connection');
 
 module.exports = {
 
-    async exists(name, countryId){
-        try{
-        console.log('\nExist: ' + name + ' - ' + countryId);
-		    const namep = await connection('places')
-            .where('countryId', '=', countryId)
-            .select('name')
-
-            if (namep == name)
-            {
-	            return (1);
-            }else{
-                return (0);
-            }
-        }catch(error){
-            console.log(error.name + ":" + error.message);
-            return (-1);
-        }
-
-    },
-
     async create(request, response){
         const { name, data, countryId } = request.body;
-        var exist = -1;
+
+        try{
+            const country = await connection('countries')
+            .where('id', '=', countryId)
+            .first()
+
+            if ( country == undefined)
+            {
+                console.log('\nSelected country does not exist!');
+                return response.status(400).send();
+            }
+        }catch(error){
+
+        };
+
         try{
             const place = await connection('places')
             .where('countryId', '=', countryId)
             .where('name', '=', name)
-            .first()
+            .select('*');
 
-            if(place.name == name){ exist = 1
-            }else{ exist = 0}
+            if ( place[0].id != undefined)
+            {
+                console.log('\nThis place already exist!');
+                return response.status(400).send();
+            }
         }catch(error){
-            
+
         }
         
-        if ( exist == 0){
         try{
             await connection('places').insert({
                 name, 
@@ -48,12 +44,6 @@ module.exports = {
             return response.status(201).send()
         }catch(error){
             console.log(error.name + ":" + error.message);
-            return response.status(400).send();
-        }
-        } else if( exist == 1){
-            console.log('\nThis place already exist!');
-            return response.status(404).send();
-        } else {
             return response.status(400).send();
         }
     },
@@ -96,39 +86,35 @@ module.exports = {
 
         const { id, newName, newData } = request.body;
 
-        var exist = -1;
         try{
             const place = await connection('places')
             .where('id', '=', id)
-            .first()
+            .select('*')
 
-            if(place.id == id){ exist = 1
-            }else{ exist = 0}
-        }catch(error){
-            
-        }
-        
-        if ( exist == 1){
-            const up = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+            console.log(place);
 
-            try{
-                await connection('places').where('id', '=', id).update({
-                    name: newName,
-                    data: newData,
-                    updated: up
-                });
-                console.log("\nPlace updated sucessfull!");
-	            return response.status(204).send();
-            }
-            catch(error){
-                console.log(error.name + ":" + error.message);
+            if ( place[0].id == undefined)
+            {
+                console.log('\nSelected place does not exist!');
                 return response.status(400).send();
             }
-        }else if( exist == 0){
-            console.log("\nError! This place does'nt exist!");
-            return response.status(400).send();
-        }else{
-            console.log("\nError! This place does'nt exist!");
+        }catch(error){
+
+        }
+        
+        const up = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+
+        try{
+            await connection('places').where('id', '=', id).update({
+                name: newName,
+                data: newData,
+                updated: up
+            });
+            console.log("\nPlace updated sucessfull!");
+	        return response.status(204).send();
+        }
+        catch(error){
+            console.log(error.name + ":" + error.message);
             return response.status(400).send();
         }
     },

@@ -37,8 +37,19 @@ var placeCreate = [
     {
         type: 'input',
         name: 'data',
-        message: 'Insert the month and year you want to visit the place, follow the model (yyyy-mm): ',
+        message: 'Insert the month and year you want to visit the place, follow the model (yyyy/mm): ',
         validate(value) {
+            var data = value;
+
+            if(!/^\d{4}\/\d{2}$/.test(data))
+            return 'Invalid date format!';
+
+            var year   = data.split("/")[0];
+            var month  = data.split("/")[1]
+            
+            if(year < 1000 || year > 3000 || month <= 0 || month > 12)
+                return 'Invalid date format!';
+
             if (value.length) {
                 return (true);
             }
@@ -76,12 +87,23 @@ var placeUpdate = [
     {
         type: 'input',
         name: 'newData',
-        message: 'Insert the new date you want to visit the place, follow the model (yyyy-mm): ',
+        message: 'Insert the new date you want to visit the place, follow the model (yyyy/mm): ',
         validate(value) {
+            var data = value;
+
+            if(!/^\d{4}\/\d{2}$/.test(data))
+            return 'Invalid date format!';
+
+            var year   = data.split("/")[0];
+            var month  = data.split("/")[1]
+            
+            if(year < 1000 || year > 3000 || month <= 0 || month > 12)
+                return 'Invalid date format!';
+
             if (value.length) {
                 return (true);
             }
-                return 'It cannot be empty. Please enter it correctly...';
+            return 'It cannot be empty. Please enter it correctly...';
         }
     },
 ];
