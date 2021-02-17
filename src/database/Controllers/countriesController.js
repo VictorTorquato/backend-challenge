@@ -10,6 +10,7 @@ module.exports = {
                 name,
                 url
             });
+            console.log("\nCountry added sucessfull!");
             return response.status(201).send();
         }catch(error){
             console.log(error.name + ":" + error.message);
@@ -34,7 +35,6 @@ module.exports = {
         } 
     },
 
-
     async delete(request, response){
 	    const { id } = request.params;
 	
@@ -42,7 +42,8 @@ module.exports = {
 		    await connection('countries')
 		    .where('id', id)
 		    .delete();
-	        return response.status(204).send('Country deleted successful!');
+            console.log("\nCountry deleted sucessfull!");
+	        return response.status(204).send();
         }catch(error){
             console.log(error.name + ":" + error.message);
             return response.status(400).send();;

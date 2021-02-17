@@ -172,6 +172,7 @@ module.exports = {
                 case 'Update place':
                     console.clear();
                     HttpRequest.listPlaces();
+                    setTimeout(function() {
                     console.log('\n');
                     inquirer.prompt(placeUpdate)
                     .then(answers => {
@@ -190,7 +191,7 @@ module.exports = {
                                     // Something else when wrong
                                 }
                             });
-                        }, 1500);
+                        }, 800);
                     }).catch(error => {
                         if(error.isTtyError) {
                             // Prompt couldn't be rendered in the current environment
@@ -198,6 +199,7 @@ module.exports = {
                             // Something else when wrong
                         }
                     });
+                }, 800);
                 break;
                 case 'Delete place':
                     HttpRequest.listPlaces();

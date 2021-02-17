@@ -44,6 +44,7 @@ module.exports = {
                 data,
                 countryId
             })
+            console.log("\nPlace added sucessfull!");
             return response.status(201).send()
         }catch(error){
             console.log(error.name + ":" + error.message);
@@ -83,6 +84,7 @@ module.exports = {
 		    await connection('places')
 		    .where('id', id)
 		    .delete();
+            console.log("\nPlace deleted sucessfull!");
 	        return response.status(204).send();
         }catch(error){
             console.log(error.name + ":" + error.message);
@@ -93,21 +95,41 @@ module.exports = {
     async update(request, response){
 
         const { id, newName, newData } = request.body;
-        
-        const up = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
 
+        var exist = -1;
         try{
-            await connection('places').where('id', '=', id).update({
-                name: newName,
-                data: newData,
-                updated: up
-            });
-	        return response.status(204).send();
+            const place = await connection('places')
+            .where('id', '=', id)
+            .first()
+
+            if(place.id == id){ exist = 1
+            }else{ exist = 0}
+        }catch(error){
+            
         }
-        catch(error){
-            console.log(error.name + ":" + error.message);
+        
+        if ( exist == 1){
+            const up = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+
+            try{
+                await connection('places').where('id', '=', id).update({
+                    name: newName,
+                    data: newData,
+                    updated: up
+                });
+                console.log("\nPlace updated sucessfull!");
+	            return response.status(204).send();
+            }
+            catch(error){
+                console.log(error.name + ":" + error.message);
+                return response.status(400).send();
+            }
+        }else if( exist == 0){
+            console.log("\nError! This place does'nt exist!");
+            return response.status(400).send();
+        }else{
+            console.log("\nError! This place does'nt exist!");
             return response.status(400).send();
         }
-    }
-
+    },
 }
