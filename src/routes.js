@@ -6,6 +6,7 @@ const placesController = require('./database/controllers/placesController');
 const countriesController = require('./database/controllers/countriesController');
 
 routes.get('/places', placesController.index);
+routes.get('/places/exist', placesController.exists);
 routes.post('/places', placesController.create);
 routes.delete('/places/:id', placesController.delete);
 routes.put('/places', placesController.update);

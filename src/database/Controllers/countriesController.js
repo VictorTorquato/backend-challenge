@@ -18,9 +18,22 @@ module.exports = {
     },
 
     async index(request, response){
-        const data = await connection('countries').select('*');
-        return response.json(data);
+        try{
+            const countries = await connection('countries').select('*');
+            var data =  ('\nCountries: ' + '\n');
+
+            for (var i = 0; countries[i]!=undefined ; i++)
+            {
+                data = data.substr(0,data.length) + ('ID: ' + countries[i].id + ' - ' + countries[i].name + ' | Flag Url: ' + countries[i].url) + ' \n';
+            }
+
+            return response.status(200).send(data);
+        }catch(error){
+            console.log(error.name + ":" + error.message);
+            return response.status(400).send();
+        } 
     },
+
 
     async delete(request, response){
 	    const { id } = request.params;
@@ -29,7 +42,7 @@ module.exports = {
 		    await connection('countries')
 		    .where('id', id)
 		    .delete();
-	        return response.status(204).send();
+	        return response.status(204).send('Country deleted successful!');
         }catch(error){
             console.log(error.name + ":" + error.message);
             return response.status(400).send();;
