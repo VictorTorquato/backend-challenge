@@ -18,7 +18,9 @@ Git - https://git-scm.com/downloads
 Após ter instalado, crie uma pasta onde vai ser armazenado o projeto e rode o terminal nessa pasta ( Windows 10: Shift+ClickDireito - “Abrir janela do PowerShell aqui”). No terminal, digite os seguintes comandos, um de cada vez, e dê “Enter”:  
 
 git clone https://github.com/VictorTorquato/backend-challenge 
+
 cd backend-challenge 
+
 npm install  
 
 Com isso, o projeto foi clonado para sua máquina e todas as dependências foram instaladas. Para iniciar a aplicação basta executar o comando:  
